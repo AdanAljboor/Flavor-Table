@@ -29,3 +29,7 @@ http://localhost:3000
 - JavaScript
 - Spoonacular API
 
+
+# Flavor Table
+
+**Flavor Table Part 2 - Initial setup for database integration.**

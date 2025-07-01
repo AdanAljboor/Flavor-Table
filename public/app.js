@@ -8,36 +8,21 @@ const favoritesList = document.getElementById('favoritesList');
 if (searchBtn) {
     searchBtn.addEventListener('click', () => {
         const ingredients = ingredientsInput.value;
-
-        if (ingredients.trim() === '') {
-            alert('Please enter some ingredients.');
-            return;
-        }
-
+        if (ingredients.trim() === '') return;
         fetch(`/recipes/search?ingredients=${ingredients}`)
             .then(response => response.json())
             .then(data => {
                 displayResults(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to fetch recipes.');
             });
     });
 }
 
 function displayResults(recipes) {
     resultsDiv.innerHTML = '';
-
-    if (recipes.length === 0) {
-        resultsDiv.innerHTML = '<p>No recipes found.</p>';
-        return;
-    }
-
+    if (recipes.length === 0) return;
     recipes.forEach(recipe => {
         const recipeCard = document.createElement('div');
         recipeCard.classList.add('recipe-card');
-
         recipeCard.innerHTML = `
             <h3>${recipe.title}</h3>
             <img src="${recipe.image}" alt="${recipe.title}">
@@ -46,16 +31,12 @@ function displayResults(recipes) {
                 <button>View Details</button>
             </div>
         `;
-
         resultsDiv.appendChild(recipeCard);
-
         const addButton = recipeCard.querySelector('button:first-of-type');
         const detailsButton = recipeCard.querySelector('button:last-of-type');
-
         addButton.addEventListener('click', () => {
             addToFavorites(recipe);
         });
-
         detailsButton.addEventListener('click', () => {
             viewDetails(recipe);
         });
@@ -68,22 +49,15 @@ if (randomBtn) {
             .then(response => response.json())
             .then(data => {
                 displayRandomRecipe(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to fetch random recipe.');
             });
     });
 }
 
 function displayRandomRecipe(data) {
     const recipe = data.recipes[0];
-
     randomResult.innerHTML = '';
-
     const recipeCard = document.createElement('div');
     recipeCard.classList.add('recipe-card');
-
     recipeCard.innerHTML = `
         <h3>${recipe.title}</h3>
         <img src="${recipe.image}" alt="${recipe.title}">
@@ -92,26 +66,29 @@ function displayRandomRecipe(data) {
             <button>View Details</button>
         </div>
     `;
-
     randomResult.appendChild(recipeCard);
-
     const addButton = recipeCard.querySelector('button:first-of-type');
     const detailsButton = recipeCard.querySelector('button:last-of-type');
-
     addButton.addEventListener('click', () => {
         addToFavorites(recipe);
     });
-
     detailsButton.addEventListener('click', () => {
         viewDetails(recipe);
     });
 }
 
 function addToFavorites(recipe) {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    favorites.push(recipe);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    alert('Recipe added to favorites!');
+    fetch('/recipes/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            title: recipe.title,
+            image: recipe.image,
+            instructions: recipe.instructions || '',
+            ingredients: recipe.ingredients || [],
+            readyIn: recipe.readyInMinutes || 0
+        })
+    });
 }
 
 function viewDetails(recipe) {
@@ -121,43 +98,37 @@ function viewDetails(recipe) {
 
 function displayFavorites() {
     if (!favoritesList) return;
-
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    favoritesList.innerHTML = '';
-
-    if (favorites.length === 0) {
-        favoritesList.innerHTML = '<p>No favorite recipes saved.</p>';
-        return;
-    }
-
-    favorites.forEach((recipe, index) => {
-        const recipeCard = document.createElement('div');
-        recipeCard.classList.add('recipe-card');
-
-        recipeCard.innerHTML = `
-            <h3>${recipe.title}</h3>
-            <img src="${recipe.image}" alt="${recipe.title}">
-            <div class="button-group">
-                <button data-index="${index}">Remove</button>
-            </div>
-        `;
-
-        favoritesList.appendChild(recipeCard);
-
-        const removeButton = recipeCard.querySelector('button');
-        removeButton.addEventListener('click', () => {
-            removeFavorite(index);
+    fetch('/recipes/all')
+        .then(response => response.json())
+        .then(favorites => {
+            favoritesList.innerHTML = '';
+            if (favorites.length === 0) return;
+            favorites.forEach(recipe => {
+                const recipeCard = document.createElement('div');
+                recipeCard.classList.add('recipe-card');
+                recipeCard.innerHTML = `
+                    <h3>${recipe.title}</h3>
+                    <img src="${recipe.image}" alt="${recipe.title}">
+                    <div class="button-group">
+                        <button data-id="${recipe.id}">Delete</button>
+                    </div>
+                `;
+                favoritesList.appendChild(recipeCard);
+                const removeButton = recipeCard.querySelector('button');
+                removeButton.addEventListener('click', () => {
+                    removeFavorite(recipe.id);
+                });
+            });
         });
-    });
 }
 
 if (favoritesList) {
     displayFavorites();
 }
 
-function removeFavorite(index) {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    favorites.splice(index, 1);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    displayFavorites();
+function removeFavorite(id) {
+    fetch(`/recipes/${id}`, { method: 'DELETE' })
+        .then(() => {
+            displayFavorites();
+        });
 }

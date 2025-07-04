@@ -3,7 +3,6 @@ const ingredientsInput = document.getElementById('ingredientsInput');
 const resultsDiv = document.getElementById('results');
 const randomBtn = document.getElementById('randomBtn');
 const randomResult = document.getElementById('randomResult');
-const favoritesList = document.getElementById('favoritesList');
 
 if (searchBtn) {
     searchBtn.addEventListener('click', () => {
@@ -94,41 +93,4 @@ function addToFavorites(recipe) {
 function viewDetails(recipe) {
     localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
     window.location.href = 'details.html';
-}
-
-function displayFavorites() {
-    if (!favoritesList) return;
-    fetch('/recipes/all')
-        .then(response => response.json())
-        .then(favorites => {
-            favoritesList.innerHTML = '';
-            if (favorites.length === 0) return;
-            favorites.forEach(recipe => {
-                const recipeCard = document.createElement('div');
-                recipeCard.classList.add('recipe-card');
-                recipeCard.innerHTML = `
-                    <h3>${recipe.title}</h3>
-                    <img src="${recipe.image}" alt="${recipe.title}">
-                    <div class="button-group">
-                        <button data-id="${recipe.id}">Delete</button>
-                    </div>
-                `;
-                favoritesList.appendChild(recipeCard);
-                const removeButton = recipeCard.querySelector('button');
-                removeButton.addEventListener('click', () => {
-                    removeFavorite(recipe.id);
-                });
-            });
-        });
-}
-
-if (favoritesList) {
-    displayFavorites();
-}
-
-function removeFavorite(id) {
-    fetch(`/recipes/${id}`, { method: 'DELETE' })
-        .then(() => {
-            displayFavorites();
-        });
 }

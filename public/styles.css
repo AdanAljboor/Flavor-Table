@@ -46,16 +46,16 @@ h2 {
     text-align: center;
 }
 
-#ingredientsInput {
+#ingredientsInput, #title, #image, #instructions, #ingredients, #readyIn {
     display: block;
-    margin: 20px auto;
+    margin: 10px auto;
     padding: 12px;
     width: 300px;
     border-radius: 8px;
     border: 1px solid #ccc;
 }
 
-#searchBtn, #randomBtn {
+#searchBtn, #randomBtn, button[type="submit"] {
     display: block;
     margin: 15px auto;
     padding: 12px 30px;
@@ -67,7 +67,7 @@ h2 {
     cursor: pointer;
 }
 
-#searchBtn:hover, #randomBtn:hover {
+#searchBtn:hover, #randomBtn:hover, button[type="submit"]:hover {
     background-color: #2980b9;
 }
 
@@ -153,4 +153,14 @@ h2 {
 
 .recipe-card .button-group button:last-of-type:hover {
     background-color: #2980b9;
+}
+
+form {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 400px;
+    width: 90%;
+    margin-top: 30px;
 }

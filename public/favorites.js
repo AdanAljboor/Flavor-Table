@@ -1,7 +1,13 @@
 const favoritesList = document.getElementById('favoritesList');
 
 function fetchFavorites() {
-    fetch('/recipes/all')
+    const token = getToken();
+
+    fetch('/recipes/all', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
         .then(response => response.json())
         .then(data => {
             displayFavorites(data);
@@ -50,8 +56,13 @@ function displayFavorites(recipes) {
 }
 
 function deleteRecipe(id) {
+    const token = getToken();
+
     fetch(`/recipes/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
     })
         .then(response => response.json())
         .then(data => {

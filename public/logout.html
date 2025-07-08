@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flavor Table</title>
+  <title>Logout</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,18 +12,17 @@
   <a href="index.html">Home</a>
   <a href="randomRecipes.html">Random Recipe</a>
   <a href="favorites.html">Favorites</a>
-  <a href="login.html">Login</a>
-  <a href="logout.html">Logout</a>
 </nav>
 
-<h2>Discover Delicious Recipes with Flavor Table</h2>
-
-<input type="text" id="ingredientsInput" placeholder="Enter ingredients separated by commas" />
-<button id="searchBtn">Search</button>
-
-<div id="results"></div>
+<h2>You have been logged out</h2>
+<button id="logoutBtn">Back to Login</button>
 
 <script src="auth.js"></script>
-<script src="app.js"></script>
+<script>
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    removeToken();
+    window.location.href = 'login.html';
+  });
+</script>
 </body>
 </html>

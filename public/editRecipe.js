@@ -8,7 +8,13 @@ const readyInInput = document.getElementById('readyIn');
 const params = new URLSearchParams(window.location.search);
 const recipeId = params.get('id');
 
-fetch(`/recipes/all`)
+const token = getToken();
+
+fetch(`/recipes/all`, {
+    headers: {
+        'Authorization': `Bearer ${token}`
+    }
+})
     .then(response => response.json())
     .then(recipes => {
         const recipe = recipes.find(r => r.id == recipeId);
@@ -34,7 +40,10 @@ form.addEventListener('submit', (e) => {
 
     fetch(`/recipes/${recipeId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(updatedRecipe)
     })
         .then(response => response.json())

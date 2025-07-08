@@ -3,6 +3,7 @@ const router = express.Router();
 const { Pool } = require('pg');
 const dotenv = require('dotenv');
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 dotenv.config();
 
 const pool = new Pool({
@@ -10,6 +11,19 @@ const pool = new Pool({
 });
 
 const apiKey = process.env.API_KEY;
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+}
 
 router.get('/random', async (req, res) => {
     try {
@@ -34,7 +48,7 @@ router.get('/search', async (req, res) => {
     }
 });
 
-router.get('/all', async (req, res) => {
+router.get('/all', authenticateToken, async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM recipes');
         res.json(result.rows);
@@ -43,7 +57,7 @@ router.get('/all', async (req, res) => {
     }
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', authenticateToken, async (req, res) => {
     const { title, image, instructions, ingredients, readyIn } = req.body;
     try {
         const result = await pool.query(
@@ -56,7 +70,7 @@ router.post('/add', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     try {
         await pool.query('DELETE FROM recipes WHERE id = $1', [id]);
@@ -66,7 +80,7 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const { title, image, instructions, ingredients, readyIn } = req.body;
     try {

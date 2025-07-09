@@ -10,20 +10,21 @@
 
 <nav>
   <a href="index.html">Home</a>
-  <a href="randomRecipes.html">Random Recipe</a>
-  <a href="favorites.html">Favorites</a>
-  <a href="login.html">Login</a>
-  <a href="logout.html">Logout</a>
+  <a href="randomRecipes/randomRecipes.html">Random Recipe</a>
+  <a href="favorites/favorites.html">Favorites</a>
+  <a href="login/login.html" id="loginLink">Login</a>
+  <a href="logout/logout.html" id="logoutLink" style="display: none;">Logout</a>
 </nav>
 
-<h2>Discover Delicious Recipes with Flavor Table</h2>
-
-<input type="text" id="ingredientsInput" placeholder="Enter ingredients separated by commas" />
+<h2>Search for Recipes</h2>
+<input type="text" id="ingredientsInput" placeholder="Enter ingredients" />
 <button id="searchBtn">Search</button>
 
+<div id="alertBox" class="alert"></div>
 <div id="results"></div>
 
 <script src="auth.js"></script>
 <script src="app.js"></script>
+<script src="nav/nav.js"></script>
 </body>
 </html>

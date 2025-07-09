@@ -1,59 +1,91 @@
-const searchBtn = document.getElementById('searchBtn');
-const resultsDiv = document.getElementById('results');
+document.getElementById("searchBtn").addEventListener("click", async () => {
+  const ingredients = document.getElementById("ingredientsInput").value.trim();
+  const alertBox = document.getElementById("alertBox");
+  const results = document.getElementById("results");
 
-searchBtn.addEventListener('click', async () => {
-  const ingredientsInput = document.getElementById('ingredientsInput').value;
+  results.innerHTML = "";
+  alertBox.className = "alert info";
+  alertBox.textContent = "Searching for recipes...";
+  alertBox.style.display = "block";
 
   try {
-    const token = getToken();
+    const res = await fetch(`/api/recipes/search?ingredients=${ingredients}`);
+    const data = await res.json();
 
-    const response = await fetch(`/recipes/search?ingredients=${ingredientsInput}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    if (res.ok) {
+      if (data.recipes.length === 0) {
+        alertBox.className = "alert warning";
+        alertBox.textContent = "No recipes found. Try different ingredients.";
+        return;
       }
-    });
 
-    const data = await response.json();
+      alertBox.className = "alert success";
+      alertBox.textContent = `${data.recipes.length} recipes found.`;
 
-    resultsDiv.innerHTML = '';
-    data.forEach(recipe => {
-      const card = document.createElement('div');
-      card.className = 'recipe-card';
-      card.innerHTML = `
-        <h3>${recipe.title}</h3>
-        <img src="${recipe.image}" alt="${recipe.title}" />
-        <button class="saveBtn">Save to Favorites</button>
-      `;
-
-      const saveBtn = card.querySelector('.saveBtn');
-      saveBtn.addEventListener('click', async () => {
-        try {
-          const saveResponse = await fetch('/recipes/add', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              title: recipe.title,
-              image: recipe.image,
-              instructions: 'No instructions provided',
-              ingredients: [],
-              readyIn: 0
-            })
-          });
-
-          const saveResult = await saveResponse.json();
-          alert('Recipe saved successfully!');
-        } catch (err) {
-          alert('Failed to save recipe.');
-        }
+      data.recipes.forEach((recipe) => {
+        const card = document.createElement("div");
+        card.className = "recipe-card";
+        card.innerHTML = `
+          <img src="${recipe.image}" alt="${recipe.title}">
+          <h3>${recipe.title}</h3>
+          <p>${recipe.summary || "No summary available."}</p>
+          <div class="button-group">
+            <button onclick="viewDetails(${recipe.id})">View Details</button>
+            <button onclick="addToFavorites(${recipe.id})">Add to Favorites</button>
+          </div>
+        `;
+        results.appendChild(card);
       });
+    } else {
+      alertBox.className = "alert error";
+      alertBox.textContent = data.message || "Search failed.";
+    }
+  } catch (err) {
+    alertBox.className = "alert error";
+    alertBox.textContent = "An error occurred during search.";
+  }
 
-      resultsDiv.appendChild(card);
+  alertBox.style.display = "block";
+});
+
+function viewDetails(id) {
+  window.location.href = `details/details.html?id=${id}`;
+}
+
+async function addToFavorites(recipeId) {
+  const token = localStorage.getItem("token");
+  const alertBox = document.getElementById("alertBox");
+
+  if (!token) {
+    alertBox.className = "alert warning";
+    alertBox.textContent = "Please log in to add recipes to favorites.";
+    alertBox.style.display = "block";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/recipes/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ recipeId }),
     });
 
+    const data = await res.json();
+
+    if (res.ok) {
+      alertBox.className = "alert success";
+      alertBox.textContent = "Recipe added to favorites.";
+    } else {
+      alertBox.className = "alert error";
+      alertBox.textContent = data.message || "Failed to add to favorites.";
+    }
   } catch (err) {
-    resultsDiv.innerHTML = 'Error fetching recipes.';
+    alertBox.className = "alert error";
+    alertBox.textContent = "Error adding recipe to favorites.";
   }
-});
+
+  alertBox.style.display = "block";
+}

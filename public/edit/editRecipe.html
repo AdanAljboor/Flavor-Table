@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Recipe</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="../randomRecipes/randomRecipes.html">Random Recipe</a>
+  <a href="../favorites/favorites.html">Favorites</a>
+  <a href="../login/login.html" id="loginLink">Login</a>
+  <a href="../logout/logout.html" id="logoutLink" style="display: none;">Logout</a>
+</nav>
+
+<h2>Edit Recipe</h2>
+
+<form id="editForm">
+  <input type="text" id="title" placeholder="Title" required />
+  <input type="text" id="image" placeholder="Image URL" required />
+  <textarea id="instructions" placeholder="Instructions" required></textarea>
+  <input type="text" id="ingredients" placeholder="Ingredients" required />
+  <input type="number" id="readyIn" placeholder="Ready in minutes" required />
+  <button type="submit">Update</button>
+</form>
+
+<div id="alertBox" class="alert"></div>
+
+<script src="../auth.js"></script>
+<script src="editRecipe.js"></script>
+<script src="../nav/nav.js"></script>
+</body>
+</html>

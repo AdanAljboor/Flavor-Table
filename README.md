@@ -1,64 +1,98 @@
-# Flavor Table
+# Flavor Table 🍽️
 
-This is a simple recipe search application built using Node.js, Express, and the Spoonacular API.
+A simple full-stack recipe app built using Node.js, Express, PostgreSQL, and the Spoonacular API.
 
-## What the project does:
+---
 
-- Search for recipes by ingredients
-- Get a random recipe suggestion
-- Save favorite recipes using local storage
-- View detailed information for selected recipes
+## 🌟 Features
 
-## How to run the project:
+-  Search for recipes by ingredients
+-  Get random recipe suggestions
+-  Save favorite recipes (with database support)
+-  View detailed recipe info
+-  Edit and delete saved recipes
+-  User registration & login with JWT
 
-1. Open the terminal
-2. Run:
-npm install
-3. Add your Spoonacular API key to a `.env` file:
-4. Run the server:
- npm start
+---
+
+## 🚀 How to Run the Project
+
+### Part 1 (Basic Functionality)
+1. Clone the repository.
+2. In the terminal, run:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file and add:
+   ```
+   SPOONACULAR_API_KEY=your_api_key
+   JWT_SECRET=your_jwt_secret
+   ```
+4. Start the server:
+   ```bash
+   node server.js
+   ```
 5. Open your browser at:
-http://localhost:3000
+   ```
+   http://localhost:3000
+   ```
 
-## Technologies used:
+---
 
-- Node.js
-- Express
-- HTML
-- CSS
-- JavaScript
-- Spoonacular API
+### Part 2 (Database Integration)
 
-
-# Flavor Table Part 2 - Database Integration
-
-## What the project does:
-- Search for recipes by ingredients (API)
-- Get random recipe suggestion (API)
-- Store, update, delete favorite recipes using PostgreSQL database
-- View favorite recipes on the page
-
-## How to run the project:
-1. Run PostgreSQL server
-2. Create database `flavor_table`
-3. Create table `recipes` as described in the lab
-4. Fill in `.env` file with database credentials
-5. In terminal:
-```
-npm install
-node server.js
-```
+1. Start your PostgreSQL server.
+2. Create a database:
+   ```sql
+   CREATE DATABASE flavor_table;
+   ```
+3. Create a `favorites` table:
+   ```sql
+   CREATE TABLE favorites (
+     id SERIAL PRIMARY KEY,
+     user_id INTEGER NOT NULL,
+     recipe_id INTEGER NOT NULL,
+     UNIQUE (user_id, recipe_id)
+   );
+   ```
+4. Fill in `.env` with your DB URL:
+   ```
+   DATABASE_URL=postgresql://username:password@localhost:5432/flavor_table
+   ```
+5. In terminal, run:
+   ```bash
+   node server.js
+   ```
 6. Open `index.html` to interact with the app
 
-## Time to complete:
-- Around 5-6 hours including setup and testing
+---
 
-## Challenges:
-- Connecting frontend to database
-- Testing API with Postman
-- Handling JSON data properly
+##  Technologies Used
 
-## Notes:
-- Axios is used to interact with the database via API
+- Node.js
+- Express.js
+- PostgreSQL
+- HTML / CSS / JavaScript
+- Spoonacular API
+
+---
+
+##  Challenges Faced
+
+- Connecting frontend to the database
+- Testing APIs with Postman
+- Handling async/await and JSON responses
+
+---
+
+##  Time to Complete
+
+- ~5–6 hours (including setup and testing)
+
+---
+
+##  Notes
+
+- Axios is used for all API calls
 - Favorite recipes are now stored in the database instead of localStorage
-- Basic edit and delete functionality is implemented
+- Alerts used for feedback (success, error, warning, info)

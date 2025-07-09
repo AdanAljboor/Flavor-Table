@@ -1,5 +1,7 @@
 # Flavor Table 🍽️
 
+https://flavor-table-xh1b.onrender.com
+
 A simple full-stack recipe app built using Node.js, Express, PostgreSQL, and the Spoonacular API.
 
 ---
